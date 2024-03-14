@@ -1,14 +1,15 @@
 "use client"
-import { Box, Button, Flex, Grid, HStack, Stack, VStack } from "@chakra-ui/react"
+import { Box, Button, Grid, HStack, Stack, VStack } from "@chakra-ui/react"
 import { FC, PropsWithChildren, useEffect, useState } from "react"
 
 const NumberInput: FC<{ onTapNumber: (val: number) => void }> = ({ onTapNumber }) => {
-  return <Grid gap={4} gridTemplateColumns={"repeat(5, 1fr)"} w="100%">
+  return <Grid gap={4} py={10} gridTemplateColumns={"repeat(5, 1fr)"} w="100%">
     {Array.from({ length: 10 }).map((_, i) => {
       return <Box key={i}>
-        <Box fontSize={"4xl"} fontWeight={"bold"} rounded="md" bg="gray.100" textAlign={"center"} onClick={() => {
-          onTapNumber(i)
-        }}>
+        <Box fontSize={"6xl"} fontWeight={"bold"} rounded="md"
+          bg="blue.100" textAlign={"center"} onClick={() => {
+            onTapNumber(i)
+          }}>
           {i}
         </Box>
       </Box>
@@ -46,9 +47,9 @@ type QuizSet = ReturnType<typeof generateQuiz>
 
 const Quiz: FC<{ quiz: QuizSet }> = ({ quiz }) => {
   return <HStack fontSize={"8xl"} fontWeight={"bold"}>
-    <Box bg="gray.100" p={4} rounded={"full"}>{quiz.left}</Box>
-    <Box bg="gray.100" p={4} rounded={"full"}>{quiz.op}</Box>
-    <Box bg="gray.100" p={4} rounded={"full"}>{quiz.right}</Box>
+    <Box minW={"1.8em"} textAlign={"center"} bg="gray.100" p={4} rounded={"full"}>{quiz.left}</Box>
+    <Box p={4} rounded={"full"}>{quiz.op}</Box>
+    <Box minW={"1.8em"} textAlign={"center"} bg="gray.100" p={4} rounded={"full"}>{quiz.right}</Box>
     <Box>=</Box>
   </HStack>
 }
@@ -86,7 +87,7 @@ export const Game: FC<{}> = () => {
   const [currentAnswer, setCurrentAnswer] = useState<number[]>([])
   const collect = currentAnswer.join("") === quiz.answer.toString()
   return <NoSSR>
-    <Grid gridTemplateColumns={"repeat(2, 1fr)"}>
+    <Grid gridTemplateColumns={"repeat(2, 1fr)"} p={8}>
       <VStack gap={8}>
         <HStack>
           <Quiz quiz={quiz} />
