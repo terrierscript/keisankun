@@ -1,5 +1,5 @@
 "use client"
-import { Box, Flex, Grid, HStack, Stack } from "@chakra-ui/react"
+import { Box, Button, Flex, Grid, HStack, Stack, VStack } from "@chakra-ui/react"
 import { FC, PropsWithChildren, useEffect, useState } from "react"
 
 const NumberInput: FC<{ onTapNumber: (val: number) => void }> = ({ onTapNumber }) => {
@@ -20,7 +20,7 @@ const generateQuiz = (maxSize: number) => {
   const [small, large] = [
     Math.ceil(Math.random() * maxSize),
     Math.ceil(Math.random() * maxSize)
-  ].toSorted()
+  ].toSorted((a, b) => a - b)
   const add = 1
   const answer = large + (add * small)
   return { large, small, op: add ? "+" : "-", answer }
@@ -46,26 +46,45 @@ const NoSSR: FC<PropsWithChildren<{}>> = ({ children }) => {
   }
   return <>{children}</>
 }
-
+const InputAnswer: FC<{ answer: number[] }> = ({ answer }) => {
+  return <Box px={4} fontSize={"8xl"} fontWeight={"bold"}>
+    {answer.join("")}
+  </Box>
+}
+const CollectButton: FC<{ collect: boolean, onClick: () => void }> = ({ collect, onClick }) => {
+  if (!collect) {
+    return
+  }
+  return <Button onClick={onClick} fontSize={"6xl"} size="6xl" p={4} colorScheme="blue">
+    ⭕️ せいかい！
+  </Button>
+}
 export const Game: FC<{}> = () => {
-
-  const [quiz, setQuiz] = useState(() => generateQuiz(10))
+  const maxSize = 7
+  const [quiz, setQuiz] = useState(() => generateQuiz(maxSize))
   const answerDigit = quiz.answer.toString().length
   const [currentAnswer, setCurrentAnswer] = useState<number[]>([])
-  console.log({ currentAnswer })
-
+  const collect = currentAnswer.join("") === quiz.answer.toString()
   return <NoSSR>
     <Grid gridTemplateColumns={"repeat(2, 1fr)"}>
-      <Quiz quiz={quiz} />
-      <Stack>
+      <VStack>
 
+        <HStack>
+          <Quiz quiz={quiz} />
+          <InputAnswer answer={currentAnswer} />
+        </HStack>
+        <CollectButton collect={collect} onClick={() => {
+          setQuiz(generateQuiz(maxSize))
+          setCurrentAnswer([])
+        }} />
+      </VStack>
+      <Stack>
         <NumberInput onTapNumber={(i) => {
           const deleteSize = Math.max((currentAnswer.length + 1) - answerDigit, 0)
           const newAnswer = [...currentAnswer, i].toSpliced(0, deleteSize)
           console.log(i, currentAnswer, newAnswer)
           setCurrentAnswer(newAnswer)
         }} />
-        <Box>{currentAnswer.join("")}</Box>
       </Stack>
     </Grid >
   </NoSSR>
