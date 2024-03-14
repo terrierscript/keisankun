@@ -16,22 +16,39 @@ const NumberInput: FC<{ onTapNumber: (val: number) => void }> = ({ onTapNumber }
   </Grid>
 }
 
-const generateQuiz = (maxSize: number) => {
-  const [small, large] = [
-    Math.ceil(Math.random() * maxSize),
-    Math.ceil(Math.random() * maxSize)
-  ].toSorted((a, b) => a - b)
-  const add = 1
-  const answer = large + (add * small)
-  return { large, small, op: add ? "+" : "-", answer }
+const generateQuiz = (maxAnswer: number) => {
+  const [a, b] = [
+    Math.ceil(Math.random() * maxAnswer),
+    Math.ceil(Math.random() * maxAnswer)
+  ].toSorted((a, b) => b - a)
+  const c = a - b
+  const add = Math.random() < 0.5
+  if (add) {
+    // a = c + b
+    return {
+      left: c,
+      right: b,
+      answer: a,
+      op: "+",
+    }
+  } else {
+    //  c = a - b
+    return {
+      left: a,
+      right: b,
+      answer: c,
+      op: "-"
+    }
+  }
 }
+
 type QuizSet = ReturnType<typeof generateQuiz>
 
 const Quiz: FC<{ quiz: QuizSet }> = ({ quiz }) => {
   return <HStack fontSize={"8xl"} fontWeight={"bold"}>
-    <Box bg="gray.100" p={4} rounded={"full"}>{quiz.large}</Box>
+    <Box bg="gray.100" p={4} rounded={"full"}>{quiz.left}</Box>
     <Box bg="gray.100" p={4} rounded={"full"}>{quiz.op}</Box>
-    <Box bg="gray.100" p={4} rounded={"full"}>{quiz.small}</Box>
+    <Box bg="gray.100" p={4} rounded={"full"}>{quiz.right}</Box>
     <Box>=</Box>
   </HStack>
 }
@@ -46,11 +63,13 @@ const NoSSR: FC<PropsWithChildren<{}>> = ({ children }) => {
   }
   return <>{children}</>
 }
+
 const InputAnswer: FC<{ answer: number[] }> = ({ answer }) => {
   return <Box px={4} fontSize={"8xl"} fontWeight={"bold"}>
     {answer.join("")}
   </Box>
 }
+
 const CollectButton: FC<{ collect: boolean, onClick: () => void }> = ({ collect, onClick }) => {
   if (!collect) {
     return
@@ -59,22 +78,22 @@ const CollectButton: FC<{ collect: boolean, onClick: () => void }> = ({ collect,
     ⭕️ せいかい！
   </Button>
 }
+
 export const Game: FC<{}> = () => {
-  const maxSize = 7
-  const [quiz, setQuiz] = useState(() => generateQuiz(maxSize))
+  const maxAnswer = 10
+  const [quiz, setQuiz] = useState(() => generateQuiz(maxAnswer))
   const answerDigit = quiz.answer.toString().length
   const [currentAnswer, setCurrentAnswer] = useState<number[]>([])
   const collect = currentAnswer.join("") === quiz.answer.toString()
   return <NoSSR>
     <Grid gridTemplateColumns={"repeat(2, 1fr)"}>
-      <VStack>
-
+      <VStack gap={8}>
         <HStack>
           <Quiz quiz={quiz} />
           <InputAnswer answer={currentAnswer} />
         </HStack>
         <CollectButton collect={collect} onClick={() => {
-          setQuiz(generateQuiz(maxSize))
+          setQuiz(generateQuiz(maxAnswer))
           setCurrentAnswer([])
         }} />
       </VStack>
