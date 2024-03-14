@@ -46,7 +46,7 @@ const generateQuiz = (maxAnswer: number) => {
 type QuizSet = ReturnType<typeof generateQuiz>
 
 const Quiz: FC<{ quiz: QuizSet }> = ({ quiz }) => {
-  return <HStack fontSize={"8xl"} fontWeight={"bold"}>
+  return <HStack fontSize={"6xl"} fontWeight={"bold"}>
     <Box minW={"1.8em"} textAlign={"center"} bg="gray.100" p={4} rounded={"full"}>{quiz.left}</Box>
     <Box p={4} rounded={"full"}>{quiz.op}</Box>
     <Box minW={"1.8em"} textAlign={"center"} bg="gray.100" p={4} rounded={"full"}>{quiz.right}</Box>
